@@ -1,0 +1,18 @@
+/* left_menu.css */
+.left_side {width: 220px; position: fixed; background-color: #fff; box-shadow:2px 0 5px rgba(0,0,0,0.3);
+height: 100%;}
+.left_side .menu a {display: block; text-decoration: none;
+	padding-left: 20px; padding-top:10px; padding-bottom:10px; color: #434343;
+	font-weight: 500;
+}
+.left_side .menu a:hover {
+	background-color: #d4b3df;
+	color:#fff;
+}
+.left_side .menu a.current {
+	background-color: #700394;
+	color:#fff;
+}
+.left_side .menu a i {display: inline-block; width: 30px;}
+#logo {text-align: center; display: block; margin:20px 0;}
+#logo > img {width: 103px;}

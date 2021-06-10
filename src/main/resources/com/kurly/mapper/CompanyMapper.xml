@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kurly.mapper.CompanyMapper">
+	<insert id="insertCompany">
+		INSERT INTO mk_brand(mkb_name) VALUES(#{name})
+	</insert>
+	<select id="selectCompanyByName" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM mk_brand WHERE mkb_name=#{name}
+	</select>
+	<select id="selectCompanies" resultType="com.kurly.vo.CompanyVO">
+		SELECT * FROM mk_brand
+	</select>
+	<delete id="deleteCompany">
+		DELETE FROM mk_brand WHERE mkb_seq=#{seq}
+	</delete>
+	<update id="updateCompany">
+		UPDATE mk_brand SET mkb_name=#{mkb_name} WHERE mkb_seq=#{mkb_seq}
+	</update>
+</mapper>

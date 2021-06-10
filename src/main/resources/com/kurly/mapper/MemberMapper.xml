@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kurly.mapper.MemberMapper">
+	<select id="loginMember" resultType="java.lang.Boolean">
+		SELECT COUNT(*)
+		FROM mk_member
+		WHERE mkm_id=#{id} AND mkm_pwd=#{pwd} AND mkm_type=0
+	</select>
+	<select id="selectMembers" resultType="com.kurly.vo.MemberVO">
+		SELECT *
+		FROM mk_member
+		ORDER BY mkm_reg_date DESC
+		LIMIT 10 OFFSET #{offset}
+	</select>
+	
+	<select id="selectMemberCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM mk_member
+	</select>
+	
+	<update id="updateMemberInfo">
+		UPDATE mkm_member
+		SET mkm_status=#{status}, mkm_type=#{type}, mkm_grade=#{grade}
+		WHERE mkm_seq=${seq}
+	</update>
+	
+	<delete id="deleteMember">
+		DELETE FROM mk_member
+		WHERE mkm_seq=#{seq}
+	</delete>
+</mapper>

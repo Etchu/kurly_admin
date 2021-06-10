@@ -1,0 +1,50 @@
+.login_box {
+	position: absolute;
+	left: 50%; top: 50%;
+	text-align: center;
+	margin-left: -129px;
+	margin-top: 215px;
+}
+
+.login_box img {
+	margin-bottom: 20px;
+}
+
+.login_box .row {
+	margin-bottom: 10px;
+	padding: 10px 0;
+	text-align: left;
+}
+
+.login_box .row span {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 14px;
+}
+
+.login_box .row span:first-child {
+	width: 60px;
+	margin-right: 5px;
+}
+.login_box input {
+	font-size: 14px;
+	border: 0;
+	border-bottom: 1px solid #ccc;
+	outline: none;
+	padding: 0 10px;
+}
+
+.login_box row:last-child {
+	text-align: center;
+	padding-top: 20px;
+}
+
+.login_box button {
+	width: 70%;
+	box-sizing: border-box; padding: 8px 0;
+	border: 0;
+	border-radius: 5px;
+	background-color: #5f0080;
+	color: #fff;
+	font-size: 14px;
+}

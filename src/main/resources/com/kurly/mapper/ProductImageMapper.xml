@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kurly.mapper.ProductImageMapper">
+	<insert id="insertProductImage">
+		INSERT INTO mk_product_image(mkpi_name, mkpi_real_path, mkpi_uri, mkpi_size, mkpi_product_seq)
+		VALUES (#{mkpi_name}, #{mkpi_real_path}, #{mkpi_uri}, #{mkpi_size}, #{mkpi_product_seq});
+	</insert>
+	<select id="selectProductImage" resultType="com.kurly.vo.ProductImageVO">
+		SELECT * FROM mk_product_image WHERE mkpi_uri=#{uri}
+		ORDER BY mkpi_seq DESC LIMIT 1
+	</select>
+	<select id="selectProductImageURI" resultType="java.lang.String">
+		SELECT mkpi_uri AS uri FROM mk_product_image WHERE mkpi_product_seq=#{seq}
+		ORDER BY mkpi_seq DESC LIMIT 1
+	</select>
+	<select id="selectProductImageName" resultType="java.lang.String">
+		SELECT mkpi_name AS name FROM mk_product_image WHERE mkpi_product_seq=#{seq}
+		ORDER BY mkpi_seq DESC LIMIT 1
+	</select>
+</mapper>

@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kurly.mapper.ProductMapper">
+	<insert id="insertProduct" useGeneratedKeys="true" keyProperty="mkp_seq">
+		INSERT INTO mk_products(
+			mkp_name,
+			mkp_sub_name,
+			mkp_bi_seq,
+			mkp_ci_seq,
+			mkp_price,
+			mkp_discount,
+			mkp_discount_rate,
+			mkp_kurly_only,
+			mkp_point_rate,
+			mkp_unit,
+			mkp_weight,
+			mkp_early_delivery,
+			mkp_delivery,
+			mkp_packing_type,
+			mkp_allergy_info,
+			mkp_exp_date,
+			mkp_relation_seq
+		)
+		VALUES (
+			#{mkp_name},
+			#{mkp_sub_name},
+			#{mkp_bi_seq},
+			#{mkp_ci_seq},
+			#{mkp_price},
+			#{mkp_discount},
+			#{mkp_discount_rate},
+			#{mkp_kurly_only},
+			#{mkp_point_rate},
+			#{mkp_unit},
+			#{mkp_weight},
+			#{mkp_early_delivery},
+			#{mkp_delivery},
+			#{mkp_packing_type},
+			#{mkp_allergy_info},
+			#{mkp_exp_date},
+			#{mkp_relation_seq}
+		)
+	</insert>
+	<select id="selectProducts" resultType="com.kurly.vo.ProductVO">
+        SELECT c.*, d.mkpc_name AS category_name FROM
+        (
+            SELECT a.*, b.mkb_name AS brand_name
+            FROM mk_products a INNER JOIN mk_brand b
+            ON a.mkp_bi_seq=b.mkb_seq
+        ) c 
+        INNER JOIN mk_product_category d
+        ON c.mkp_ci_seq=d.mkpc_seq
+        <!-- brand_seq만 설정 됐을 때 -->
+        <if test="(brand_seq != 0 and brand_seq != null) and (cate_seq == 0 or cate_seq == null)">
+            WHERE mkp_bi_seq=#{brand_seq}
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <!-- cate_seq만 설정 됐을 때 -->
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq == 0 or brand_seq == null)">
+            WHERE mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq != 0 and brand_seq != null)">
+            WHERE mkp_bi_seq=#{brand_seq} AND mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <!-- 두 값 모두 미정, keyword 값만 설정 됐을 때 -->
+        <if test="(cate_seq == 0 or cate_seq == null) and (brand_seq == 0 or brand_seq == null)">
+            <if test="keyword != null">
+            	WHERE mkp_name LIKE #{keyword}
+            </if>
+        </if>
+    </select>
+	
+	<delete id="deleteProduct">
+		DELETE FROM mk_products WHERE mkp_seq=#{seq}
+	</delete>
+	
+	<select id="selectProductBySeq" resultType="com.kurly.vo.ProductVO">
+		SELECT * FROM mk_products WHERE mkp_seq=#{seq}
+	</select>
+	
+	<update id="updateProduct">
+		UPDATE mk_products 
+		SET
+			mkp_name=#{mkp_name},
+			mkp_sub_name=#{mkp_sub_name},
+			mkp_bi_seq=#{mkp_bi_seq},
+			mkp_ci_seq=#{mkp_ci_seq},
+			mkp_price=#{mkp_price},
+			mkp_discount=#{mkp_discount},
+			mkp_discount_rate=#{mkp_discount_rate},
+			mkp_kurly_only=#{mkp_kurly_only},
+			mkp_point_rate=#{mkp_point_rate},
+			mkp_unit=#{mkp_unit},
+			mkp_weight=#{mkp_weight},
+			mkp_early_delivery=#{mkp_early_delivery},
+			mkp_delivery=#{mkp_delivery},
+			mkp_packing_type=#{mkp_packing_type},
+			mkp_allergy_info=#{mkp_allergy_info},
+			mkp_exp_date=#{mkp_exp_date},
+			mkp_relation_seq=#{mkp_relation_seq}
+		WHERE mkp_seq=#{mkp_seq}
+		
+	</update>
+	
+	<insert id="insertRecommandProduct">
+		INSERT INTO mk_recommand_prod(mkrp_prod_seq)
+		VALUES (#{seq})
+	</insert>
+	
+	<insert id="insertMDRecommandProduct">
+		INSERT INTO mk_md_recommand_prod(mkmrp_prod_seq)
+		VALUES (#{seq})
+	</insert>
+	
+	<insert id="insertSpecialProduct">
+		INSERT INTO mk_special_prod(mksp_prod_seq)
+		VALUES (#{seq})
+	</insert>
+	
+	<insert id="insertAffordProduct">
+		INSERT INTO mk_afford_prod(mkap_prod_seq)
+		VALUES (#{seq})
+	</insert>
+	
+	<select id="selectProdRecommandPopupList" resultType="com.kurly.vo.ProductVO">
+		SELECT c.*, d.mkpc_name AS category_name
+		FROM(
+			SELECT a.*, b.mkb_name AS brand_name
+			FROM(
+				SELECT a1.*, b1.mkrp_seq
+				FROM mk_products a1 LEFT JOIN mk_recommand_prod b1
+				ON a1.mkp_seq=b1.mkrp_prod_seq
+			) a INNER JOIN mk_brand b
+			ON a.mkp_bi_seq=b.mkb_seq
+		) c
+		INNER JOIN mk_product_category d
+		ON c.mkp_ci_seq=d.mkpc_seq
+		<!-- brand_seq만 설정 됐을 때 -->
+        <if test="(brand_seq != 0 and brand_seq != null) and (cate_seq == 0 or cate_seq == null)">
+            WHERE mkp_bi_seq=#{brand_seq}
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <!-- cate_seq만 설정 됐을 때 -->
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq == 0 or brand_seq == null)">
+            WHERE mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq != 0 and brand_seq != null)">
+            WHERE mkp_bi_seq=#{brand_seq} AND mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+		<!-- 두 값 모두 미정, keyword 값만 설정 됐을 때 -->
+        <if test="(cate_seq == 0 or cate_seq == null) and (brand_seq == 0 or brand_seq == null)">
+            <if test="keyword != null">
+            	WHERE mkp_name LIKE #{keyword}
+            </if>
+        </if>
+	</select>
+	
+	<select id="selectRecommandList" resultType="com.kurly.vo.SimpleProductVO">
+		SELECT a.mkp_seq AS seq, a.mkp_name AS prod_name, b.mkrp_reg_date AS reg_date
+		FROM mk_products a INNER JOIN mk_recommand_prod b
+		ON a.mkp_seq=b.mkrp_prod_seq
+		ORDER BY reg_date DESC
+	</select>
+	
+	<delete id="deleteRecommandProduct">
+		DELETE FROM mk_recommand_prod
+		WHERE mkrp_prod_seq=${seq}
+	</delete>
+	
+	<select id="selectProdMDRecommandPopupList" resultType="com.kurly.vo.ProductVO">
+		SELECT c.*, d.mkpc_name AS category_name
+		FROM(
+		SELECT a.*, b.mkb_name AS brand_name
+		FROM(
+		SELECT a1.*, b1.mkmrp_seq
+		FROM mk_products a1 LEFT JOIN mk_md_recommand_prod b1
+		ON a1.mkp_seq=b1.mkmrp_prod_seq
+		) a INNER JOIN mk_brand b
+		ON a.mkp_bi_seq=b.mkb_seq
+		) c
+		INNER JOIN mk_product_category d
+		ON c.mkp_ci_seq=d.mkpc_seq
+		<!-- brand_seq만 설정 됐을 때 -->
+        <if test="(brand_seq != 0 and brand_seq != null) and (cate_seq == 0 or cate_seq == null)">
+            WHERE mkp_bi_seq=#{brand_seq}
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <!-- cate_seq만 설정 됐을 때 -->
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq == 0 or brand_seq == null)">
+            WHERE mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq != 0 and brand_seq != null)">
+            WHERE mkp_bi_seq=#{brand_seq} AND mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+		<!-- 두 값 모두 미정, keyword 값만 설정 됐을 때 -->
+        <if test="(cate_seq == 0 or cate_seq == null) and (brand_seq == 0 or brand_seq == null)">
+            <if test="keyword != null">
+            	WHERE mkp_name LIKE #{keyword}
+            </if>
+        </if>
+	</select>
+	
+	<select id="selectMDRecommandList" resultType="com.kurly.vo.SimpleProductVO">
+		SELECT a.mkp_seq AS seq, a.mkp_name AS prod_name, b.mkmrp_reg_date AS reg_date
+		FROM mk_products a INNER JOIN mk_md_recommand_prod b
+		ON a.mkp_seq=b.mkmrp_prod_seq
+		ORDER BY reg_date DESC
+	</select>
+	
+	<delete id="deleteMDRecommandProduct">
+		DELETE FROM mk_md_recommand_prod
+		WHERE mkmrp_prod_seq=${seq}
+	</delete>
+	
+	<select id="selectProdSpecialPopupList" resultType="com.kurly.vo.ProductVO">
+		SELECT c.*, d.mkpc_name AS category_name
+		FROM(
+			SELECT a.*, b.mkb_name AS brand_name
+			FROM(
+				SELECT a1.*, b1.mksp_seq
+				FROM mk_products a1 LEFT JOIN mk_special_prod b1
+				ON a1.mkp_seq=b1.mksp_prod_seq
+			) a INNER JOIN mk_brand b
+			ON a.mkp_bi_seq=b.mkb_seq
+		) c
+		INNER JOIN mk_product_category d
+		ON c.mkp_ci_seq=d.mkpc_seq
+		<!-- brand_seq만 설정 됐을 때 -->
+        <if test="(brand_seq != 0 and brand_seq != null) and (cate_seq == 0 or cate_seq == null)">
+            WHERE mkp_bi_seq=#{brand_seq}
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <!-- cate_seq만 설정 됐을 때 -->
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq == 0 or brand_seq == null)">
+            WHERE mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq != 0 and brand_seq != null)">
+            WHERE mkp_bi_seq=#{brand_seq} AND mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+		<!-- 두 값 모두 미정, keyword 값만 설정 됐을 때 -->
+        <if test="(cate_seq == 0 or cate_seq == null) and (brand_seq == 0 or brand_seq == null)">
+            <if test="keyword != null">
+            	WHERE mkp_name LIKE #{keyword}
+            </if>
+        </if>
+	</select>
+	
+	<select id="selectSpecialList" resultType="com.kurly.vo.SimpleProductVO">
+		SELECT a.mkp_seq AS seq, a.mkp_name AS prod_name, b.mksp_reg_date AS reg_date
+		FROM mk_products a INNER JOIN mk_special_prod b
+		ON a.mkp_seq=b.mksp_prod_seq
+		ORDER BY reg_date DESC
+	</select>
+	
+	<delete id="deleteSpecialProduct">
+		DELETE FROM mk_special_prod
+		WHERE mksp_prod_seq=${seq}
+	</delete>
+	
+	<select id="selectProdAffordPopupList" resultType="com.kurly.vo.ProductVO">
+		SELECT c.*, d.mkpc_name AS category_name
+		FROM(
+			SELECT a.*, b.mkb_name AS brand_name
+			FROM(
+				SELECT a1.*, b1.mkap_seq
+				FROM mk_products a1 LEFT JOIN mk_afford_prod b1
+				ON a1.mkp_seq=b1.mkap_prod_seq
+			) a INNER JOIN mk_brand b
+			ON a.mkp_bi_seq=b.mkb_seq
+		) c
+		INNER JOIN mk_product_category d
+		ON c.mkp_ci_seq=d.mkpc_seq
+		<!-- brand_seq만 설정 됐을 때 -->
+        <if test="(brand_seq != 0 and brand_seq != null) and (cate_seq == 0 or cate_seq == null)">
+            WHERE mkp_bi_seq=#{brand_seq}
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <!-- cate_seq만 설정 됐을 때 -->
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq == 0 or brand_seq == null)">
+            WHERE mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+        <if test="(cate_seq != 0 and cate_seq != null) and (brand_seq != 0 and brand_seq != null)">
+            WHERE mkp_bi_seq=#{brand_seq} AND mkp_ci_seq=#{cate_seq} 
+            <if test="keyword != null">
+                AND mkp_name LIKE #{keyword}
+            </if>
+        </if>
+		<!-- 두 값 모두 미정, keyword 값만 설정 됐을 때 -->
+        <if test="(cate_seq == 0 or cate_seq == null) and (brand_seq == 0 or brand_seq == null)">
+            <if test="keyword != null">
+            	WHERE mkp_name LIKE #{keyword}
+            </if>
+        </if>
+	</select>
+	
+	<select id="selectAffordList" resultType="com.kurly.vo.SimpleProductVO">
+		SELECT a.mkp_seq AS seq, a.mkp_name AS prod_name, b.mkap_reg_date AS reg_date
+		FROM mk_products a INNER JOIN mk_afford_prod b
+		ON a.mkp_seq=b.mkap_prod_seq
+		ORDER BY reg_date DESC
+	</select>
+	
+	<delete id="deleteAffordProduct">
+		DELETE FROM mk_afford_prod
+		WHERE mkap_prod_seq=${seq}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
